@@ -97,5 +97,8 @@
   },
   "peerDependencies": {
     "rxjs": "^7.0.0"
+  },
+  "dependencies": {
+    "async-mutex": "0.5.0"
   }
 }

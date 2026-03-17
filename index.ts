@@ -4,6 +4,7 @@ import { Scheduler } from './src/rxjs/scheduler';
 import { stripAlignmentChars } from './src/rxjs/strip-alignment-chars';
 import { Subscription } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
+import { Mutex } from 'async-mutex';
 
 export type ObservableWithSubscriptions = ColdObservable | HotObservable;
 
@@ -91,22 +92,29 @@ expect.extend({
 
 let onFlush: (() => void)[] = [];
 
+// Scheduler will use global scope, therefor we need to lock it
+const mutex = new Mutex();
+
 /**
  * Wraps the test into a marble test
  */
-export function marbleTest<T>(test: () => T) {
+export function marbleTest<T>(test: () => T): () => Promise<T> {
   return async function () {
-    Scheduler.init();
-    onFlush = [];
+    return await mutex.runExclusive(async () => {
+      Scheduler.init();
+      onFlush = [];
 
-    await Scheduler.get().run(() => {
-      TestScheduler.frameTimeFactor = 10;
-      return test();
+      const result = await Scheduler.get().run(() => {
+        TestScheduler.frameTimeFactor = 10;
+        return test();
+      });
+
+      while (onFlush.length > 0) {
+        onFlush.shift()?.();
+      }
+      Scheduler.reset();
+
+      return result;
     });
-
-    while (onFlush.length > 0) {
-      onFlush.shift()?.();
-    }
-    Scheduler.reset();
   };
 }
