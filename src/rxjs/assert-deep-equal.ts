@@ -1,4 +1,4 @@
-import { TestMessages, SubscriptionLog } from '../rxjs/types';
+import { TestMessages, SubscriptionLog } from './types';
 
 import '../jest/custom-matchers';
 

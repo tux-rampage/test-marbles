@@ -1,9 +1,6 @@
-# jest-marbles
-[![npm version](https://badge.fury.io/js/jest-marbles.svg)](https://badge.fury.io/js/jest-marbles) ![Build Status](https://github.com/just-jeb/jest-marbles/actions/workflows/build.yml/badge.svg?branch=master) ![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg) [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+# RxJS Marbles Testing Helpers
 
-
-
-A set of helper functions and Jest matchers for RxJs marble testing.
+A set of helper functions and matchers for RxJs marble testing in frameworks like Jest and Vitest.
 This library will help you to test your reactive code in easy and clear way.
 
 # Features

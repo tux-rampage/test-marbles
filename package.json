@@ -1,7 +1,7 @@
 {
-  "name": "jest-marbles",
+  "name": "@tuxrampage/test-marbles",
   "version": "3.1.1",
-  "description": "Marble testing helpers library for RxJs and Jest",
+  "description": "Marble testing helpers library for RxJs and Jest/Vitest",
   "main": "dist/umd/jest-marbles.js",
   "module": "dist/lib/index.js",
   "es2015": "dist/lib-esm/index.js",
@@ -79,7 +79,6 @@
     "eslint-config-prettier": "9.1.2",
     "eslint-plugin-prettier": "5.5.5",
     "gzip-size-cli": "^4.0.0",
-    "husky": "^8.0.0",
     "jest": "29.7.0",
     "jest-environment-jsdom": "29.7.0",
     "lint-staged": "15.5.2",

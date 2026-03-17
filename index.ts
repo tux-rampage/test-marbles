@@ -91,16 +91,22 @@ expect.extend({
 
 let onFlush: (() => void)[] = [];
 
-beforeEach(() => {
-  Scheduler.init();
-  onFlush = [];
-});
-afterEach(() => {
-  Scheduler.get().run(() => {
-    TestScheduler.frameTimeFactor = 10;
-  });
-  while (onFlush.length > 0) {
-    onFlush.shift()?.();
-  }
-  Scheduler.reset();
-});
+/**
+ * Wraps the test into a marble test
+ */
+export function marbleTest<T>(test: () => T) {
+  return async function () {
+    Scheduler.init();
+    onFlush = [];
+
+    await Scheduler.get().run(() => {
+      TestScheduler.frameTimeFactor = 10;
+      return test();
+    });
+
+    while (onFlush.length > 0) {
+      onFlush.shift()?.();
+    }
+    Scheduler.reset();
+  };
+}
