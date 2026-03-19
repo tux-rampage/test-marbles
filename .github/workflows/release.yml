@@ -1,20 +1,19 @@
-name: release
+name: Release
 
 on:
-  workflow_dispatch:
+  milestone:
+    types:
+      - closed
 
 jobs:
-  build_and_release:
+  build_and_publish:
+    name: Build and Publish
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_PERSONAL_TOKEN }}
-          fetch-depth: 0
-
+      - uses: actions/checkout@v6
       - uses: actions/cache@v4
         id: npm-cache
         with:
@@ -23,15 +22,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Release to NPM
+      - name: Publish to NPM
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |

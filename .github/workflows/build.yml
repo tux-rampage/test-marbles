@@ -1,4 +1,4 @@
-name: build
+name: Build
 
 on:
   push:
@@ -9,13 +9,14 @@ on:
 
 jobs:
   build:
+    name: Build An Test
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: true
 
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v6
       - uses: actions/cache@v4
         id: npm-cache
         with:
