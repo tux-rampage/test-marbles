@@ -101,7 +101,10 @@ const mutex = new Mutex();
 export function marbleTest<T>(test: () => T): () => Promise<T> {
   return async function () {
     return await mutex.runExclusive(async () => {
-      Scheduler.init();
+      if (!Scheduler.instance) {
+        Scheduler.init();
+      }
+
       onFlush = [];
 
       const result = await Scheduler.get().run(() => {
