@@ -46,7 +46,9 @@ export class Marblizer {
       return result;
     }, {});
 
-    const events = Object.keys(framesToEmissions).map<NotificationEvent>((frame) => framesToEmissions[frame]);
+    const events = (Object.keys(framesToEmissions) as unknown as number[]).map<NotificationEvent>(
+      (frame) => framesToEmissions[frame]
+    );
 
     Marblizer.encloseGroupEvents(events);
     return events;
