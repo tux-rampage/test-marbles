@@ -4,5 +4,6 @@ export default defineConfig({
   test: {
     name: 'marble-testing',
     include: ['spec/**/*.spec.ts'],
+    globals: true,
   },
 } as ViteUserConfig);

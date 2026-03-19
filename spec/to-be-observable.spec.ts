@@ -1,117 +1,156 @@
 import { delay, merge, Subject, switchMap, timer } from 'rxjs';
 import { concat, mapTo } from 'rxjs/operators';
-import { cold, hot, schedule, Scheduler, time } from '../index';
+import { cold, hot, marbleTest, schedule, Scheduler, time } from '../index';
 
 describe('toBeObservable matcher test', () => {
-  it('Should concatenate two cold observables into single cold observable', () => {
-    const a$ = cold('-a-|', { a: 0 });
-    const b$ = cold('-b-|', { b: 1 });
-    const expected = cold('-a--b-|', { a: 0, b: 1 });
+  it(
+    'Should concatenate two cold observables into single cold observable',
+    marbleTest(() => {
+      const a$ = cold('-a-|', { a: 0 });
+      const b$ = cold('-b-|', { b: 1 });
+      const expected = cold('-a--b-|', { a: 0, b: 1 });
 
-    expect(a$.pipe(concat(b$))).toBeObservable(expected);
-  });
+      expect(a$.pipe(concat(b$))).toBeObservable(expected);
+    })
+  );
 
-  it('Should work for value objects', () => {
-    const valueObject = { foo: 'bar' };
-    const a$ = cold('-a-|', { a: valueObject });
-    const expected = cold('-a-|', { a: valueObject });
+  it(
+    'Should work for value objects',
+    marbleTest(() => {
+      const valueObject = { foo: 'bar' };
+      const a$ = cold('-a-|', { a: valueObject });
+      const expected = cold('-a-|', { a: valueObject });
 
-    expect(a$).toBeObservable(expected);
-  });
+      expect(a$).toBeObservable(expected);
+    })
+  );
 
-  it('should work for multi-character literals', () => {
-    const falses$ = cold('--a-----b-----|');
-    const trues$ = cold('-----a-----b--|');
-    const expected = cold('--f--t--f--t--|', { t: true, f: false });
-    const mapped = merge(falses$.pipe(mapTo(false)), trues$.pipe(mapTo(true)));
+  it(
+    'should work for multi-character literals',
+    marbleTest(() => {
+      const falses$ = cold('--a-----b-----|');
+      const trues$ = cold('-----a-----b--|');
+      const expected = cold('--f--t--f--t--|', { t: true, f: false });
+      const mapped = merge(falses$.pipe(mapTo(false)), trues$.pipe(mapTo(true)));
 
-    expect(mapped).toBeObservable(expected);
-  });
+      expect(mapped).toBeObservable(expected);
+    })
+  );
 
-  it('should work for mixed literals', () => {
-    const falses$ = cold('--a-----a-----|', { a: false });
-    const trues$ = cold('-----b-----b--|', { b: true });
-    const characters$ = cold('-------------c-|');
-    const expected = cold('--f--t--f--t-c-|', { t: true, f: false, c: 'c' });
-    const mapped = merge(falses$, trues$, characters$);
+  it(
+    'should work for mixed literals',
+    marbleTest(() => {
+      const falses$ = cold('--a-----a-----|', { a: false });
+      const trues$ = cold('-----b-----b--|', { b: true });
+      const characters$ = cold('-------------c-|');
+      const expected = cold('--f--t--f--t-c-|', { t: true, f: false, c: 'c' });
+      const mapped = merge(falses$, trues$, characters$);
 
-    expect(mapped).toBeObservable(expected);
-  });
+      expect(mapped).toBeObservable(expected);
+    })
+  );
 
-  it('Should work with undefined values', () => {
-    const values$ = cold('u|', { u: undefined });
-    const expected = cold('u|', { u: undefined });
+  it(
+    'Should work with undefined values',
+    marbleTest(() => {
+      const values$ = cold('u|', { u: undefined });
+      const expected = cold('u|', { u: undefined });
 
-    expect(values$).toBeObservable(expected);
-  });
+      expect(values$).toBeObservable(expected);
+    })
+  );
 
-  it('Should merge two hot observables and start emitting from the subscription point', () => {
-    const e1 = hot('----a--^--b-------c--|');
-    const e2 = hot('---d-^--e---------f-----|');
-    const expected = cold('---(be)----c-f-----|');
+  it(
+    'Should merge two hot observables and start emitting from the subscription point',
+    marbleTest(() => {
+      const e1 = hot('----a--^--b-------c--|');
+      const e2 = hot('---d-^--e---------f-----|');
+      const expected = cold('---(be)----c-f-----|');
 
-    expect(merge(e1, e2)).toBeObservable(expected);
-  });
+      expect(merge(e1, e2)).toBeObservable(expected);
+    })
+  );
 
-  it('Should delay the emission by provided timeout with provided scheduler', () => {
-    const delay = time('-----d|');
-    const provided = timer(delay, Scheduler.get()).pipe(mapTo(0));
-    const expected = hot('------(d|)', { d: 0 });
+  it(
+    'Should delay the emission by provided timeout with provided scheduler',
+    marbleTest(() => {
+      const delay = time('-----d|');
+      const provided = timer(delay, Scheduler.get()).pipe(mapTo(0));
+      const expected = hot('------(d|)', { d: 0 });
 
-    expect(provided).toBeObservable(expected);
-  });
+      expect(provided).toBeObservable(expected);
+    })
+  );
 
-  it('Should ignore whitespace to allow vertical alignment', () => {
-    const hotInput = hot('  ---^--a|');
-    const coldInput = cold('   ---a|');
-    const expected = cold('    ---a|');
+  it(
+    'Should ignore whitespace to allow vertical alignment',
+    marbleTest(() => {
+      const hotInput = hot('  ---^--a|');
+      const coldInput = cold('   ---a|');
+      const expected = cold('    ---a|');
 
-    expect(hotInput).toBeObservable(expected);
-    expect(coldInput).toBeObservable(expected);
-  });
+      expect(hotInput).toBeObservable(expected);
+      expect(coldInput).toBeObservable(expected);
+    })
+  );
 
-  it('Should work with asymmetric matchers', () => {
-    const e$ = hot('-a', { a: { someprop: 'hey', x: { y: 1, z: 2 }, blah: '3' } });
-    expect(e$).toBeObservable(
-      cold('-b', {
-        b: expect.objectContaining({
-          x: expect.objectContaining({
-            y: 1,
+  it(
+    'Should work with asymmetric matchers',
+    marbleTest(() => {
+      const e$ = hot('-a', { a: { someprop: 'hey', x: { y: 1, z: 2 }, blah: '3' } });
+      expect(e$).toBeObservable(
+        cold('-b', {
+          b: expect.objectContaining({
+            x: expect.objectContaining({
+              y: 1,
+            }),
+            blah: '3',
           }),
-          blah: '3',
-        }),
-      })
-    );
-  });
+        })
+      );
+    })
+  );
 
-  it('Should work with schedules', () => {
-    const source = new Subject<string>();
+  it(
+    'Should work with schedules',
+    marbleTest(() => {
+      const source = new Subject<string>();
 
-    schedule(() => source.next('a'), 1);
-    schedule(() => source.next('b'), 2);
-    const expected = cold('ab');
+      schedule(() => source.next('a'), 1);
+      schedule(() => source.next('b'), 2);
+      const expected = cold('ab');
 
-    expect(source).toBeObservable(expected);
-  });
+      expect(source).toBeObservable(expected);
+    })
+  );
 
-  it('Should work with delays', () => {
-    const source = cold('a');
-    const expected = cold('--a');
+  it(
+    'Should work with delays',
+    marbleTest(() => {
+      const source = cold('a');
+      const expected = cold('--a');
 
-    expect(source.pipe(delay(20))).toBeObservable(expected);
-  });
+      expect(source.pipe(delay(20))).toBeObservable(expected);
+    })
+  );
 
-  it('Should pass if the two objects have the same properties but in different order', () => {
-    const e$ = hot('-a', { a: { someprop: 'hey', b: 1 } });
-    expect(e$).toBeObservable(cold('-b', { b: { b: 1, someprop: 'hey' } }));
-  });
+  it(
+    'Should pass if the two objects have the same properties but in different order',
+    marbleTest(() => {
+      const e$ = hot('-a', { a: { someprop: 'hey', b: 1 } });
+      expect(e$).toBeObservable(cold('-b', { b: { b: 1, someprop: 'hey' } }));
+    })
+  );
 
-  it('Should work with cold observables created during assertion execution', () => {
-    const source = cold('a').pipe(switchMap(() => cold('--a')));
-    const expected = cold('--a');
+  it(
+    'Should work with cold observables created during assertion execution',
+    marbleTest(() => {
+      const source = cold('a').pipe(switchMap(() => cold('--a')));
+      const expected = cold('--a');
 
-    expect(source).toBeObservable(expected);
-  });
+      expect(source).toBeObservable(expected);
+    })
+  );
 
   // TODO: uncomment once .not.toBeObservable works
   // it('Should fail on different errors', () => {

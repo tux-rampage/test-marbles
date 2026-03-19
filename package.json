@@ -25,17 +25,13 @@
     "observable"
   ],
   "scripts": {
-    "e2e": "jest --config=e2e/jest-browser.config.js && jest --config=e2e/jest-node.config.js",
     "cleanup": "shx rm -rf umd lib lib-esm lib-fesm typings coverage docs",
     "prebuild": "npm run cleanup && npm run verify",
-    "postbuild": "npm run e2e",
-    "build": "tsc && tsc --target es2017 --outDir dist/lib-esm && webpack && webpack --env prod",
-    "build:fesm:min": "uglifyjs lib-fesm/index.js --compress --mangle --source-map --output lib-fesm/index.min.js",
+    "build": "tsc && tsc --target es2017 --outDir dist/lib-esm",
     "docs": "typedoc -p . --theme minimal --target 'es6' --excludeNotExported --excludePrivate --ignoreCompilerErrors --exclude \"**/src/**/__tests__/*.*\" --out docs src/",
-    "test": "jest",
+    "test": "vitest --run",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage",
-    "test:only-changed": "npm test -- --bail --onlyChanged",
     "eslint": "eslint --ext .ts,.tsx ./src ./spec",
     "eslint:fix": "npm run eslint -- --fix",
     "verify": "npm run eslint && npm test",
@@ -46,17 +42,7 @@
     "release:github": "git push --follow-tags origin master",
     "release:npm": "npm publish",
     "release:preflight:package": "npm pack",
-    "size": "shx echo \"Gzipped Size:\" && cross-var strip-json-comments --no-whitespace $npm_package_main | gzip-size",
-    "prepare": "husky install"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    },
-    "validate-commit-msg": {
-      "types": "conventional-commit-types",
-      "maxSubjectLength": 120
-    }
+    "size": "shx echo \"Gzipped Size:\" && cross-var strip-json-comments --no-whitespace $npm_package_main | gzip-size"
   },
   "lint-staged": {
     "./**/*.{ts,tsx}": [
@@ -72,9 +58,8 @@
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
-    "commitizen": "^4.0.2",
+    "@vitest/coverage-v8": "4.1.0",
     "cross-var": "^1.1.0",
-    "cz-conventional-changelog": "^3.0.2",
     "eslint": "8.57.1",
     "eslint-config-prettier": "9.1.2",
     "eslint-plugin-prettier": "5.5.5",
@@ -85,16 +70,10 @@
     "prettier": "3.8.1",
     "rxjs": "7.8.2",
     "shx": "^0.3.2",
-    "standard-version": "^9.0.0",
     "strip-json-comments-cli": "^1.0.1",
     "ts-jest": "29.4.6",
-    "ts-loader": "^9.3.1",
     "typescript": "4.9.5",
-    "validate-commit-msg": "^2.14.0",
-    "vitest": "4.1.0",
-    "webpack": "5.105.4",
-    "webpack-cli": "5.1.4",
-    "webpack-config-utils": "2.3.1"
+    "vitest": "4.1.0"
   },
   "peerDependencies": {
     "rxjs": "^7.0.0"

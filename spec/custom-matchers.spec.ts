@@ -1,19 +1,21 @@
+/// <reference types="jest" />
+
 import { Marblizer } from '../src/marblizer';
 import { customTestMatchers } from '../src/jest/custom-matchers';
 
-const marblizeSubscriptionsMock = jest.fn(),
-  marblizeMock = jest.fn();
+const marblizeSubscriptionsMock = vi.fn(),
+  marblizeMock = vi.fn();
 Marblizer.marblizeSubscriptions = marblizeSubscriptionsMock;
 Marblizer.marblize = marblizeMock;
 
 const matcherContextMock: jest.MatcherContext = {
   utils: {
-    printRecieved: jest.fn(),
-    printExpected: jest.fn(),
-    matcherHint: jest.fn(),
-    diff: jest.fn(),
+    printRecieved: vi.fn(),
+    printExpected: vi.fn(),
+    matcherHint: vi.fn(),
+    diff: vi.fn(),
   },
-  equals: jest.fn((a, b) => a === b),
+  equals: vi.fn((a, b) => a === b),
 } as any;
 
 const { toBeSubscriptions, toBeNotifications, toHaveEmptySubscriptions } = customTestMatchers;
