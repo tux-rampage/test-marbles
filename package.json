@@ -1,6 +1,6 @@
 {
   "name": "@tuxrampage/test-marbles",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Marble testing helpers library for RxJs and Jest/Vitest",
   "main": "dist/umd/jest-marbles.js",
   "module": "dist/lib/index.js",
@@ -37,7 +37,6 @@
     "cz": "git-cz",
     "prerelease": "npm run build",
     "release": "npm publish --access public",
-    "postrelease": "npm run release:github && npm run release:npm",
     "release:preflight:package": "npm pack"
   },
   "lint-staged": {
