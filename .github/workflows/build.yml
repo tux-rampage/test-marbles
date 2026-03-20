@@ -9,11 +9,16 @@ on:
 
 jobs:
   build:
-    name: Build An Test
+    name: Verify
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: true
+      matrix:
+        step:
+          - build
+          - test
+          - eslint
 
     steps:
       - uses: actions/checkout@v6
@@ -34,4 +39,4 @@ jobs:
         run: npm ci
 
       - name: Run build and tests
-        run: npm run build
+        run: npm run ${{ matrix.step }}

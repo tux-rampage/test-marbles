@@ -26,7 +26,6 @@
   ],
   "scripts": {
     "cleanup": "shx rm -rf umd lib lib-esm lib-fesm typings coverage docs",
-    "prebuild": "npm run cleanup && npm run verify",
     "build": "tsc && tsc --target es2017 --outDir dist/lib-esm",
     "test": "vitest --run",
     "test:watch": "npm test -- --watch",
@@ -35,7 +34,9 @@
     "eslint:fix": "npm run eslint -- --fix",
     "verify": "npm run eslint && npm test",
     "cz": "git-cz",
-    "prerelease": "npm run build",
+    "prebuild:release": "npm run cleanup && npm run verify",
+    "build:release": "npm run build",
+    "prerelease": "npm run build:release",
     "release": "npm publish --access public",
     "release:preflight:package": "npm pack"
   },
